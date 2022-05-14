@@ -2,13 +2,16 @@
 const Router = require("express").Router();
 
 const productController = require("../controllers/product");
+const validate = require("../middlewares/validate");
 
 // daftar HTTP request method
 // definisikan endpoint
 // path /product diganti / saja karena sudah auto masuk endpoint product
 // server diganti router
 Router.get("/all", productController.getAllProducts);
-Router.get("/1", productController.getProductById);
+Router.get("/:id", productController.getProductById);
+Router.get("/", validate.queryFind, productController.findProductByQuery);
+Router.post("/", validate.productData, productController.postNewProduct);
 
 Router.get("/", (req, res) => {
   res.json({

@@ -1,7 +1,12 @@
 // const { Router } = require("express");
 
 const productModel = require("../models/product");
-const { getProductFromServer, getSingleProductFromServer } = productModel;
+const {
+  getProductFromServer,
+  getSingleProductFromServer,
+  findProduct,
+  createNewProduct,
+} = productModel;
 
 const getAllProducts = (_, res) => {
   getProductFromServer()
@@ -22,11 +27,22 @@ const getAllProducts = (_, res) => {
     });
 };
 
-const getProductById = (_, res) => {
-  getSingleProductFromServer(1)
-    .then((result) => {
+// di dalam object request,
+// kita bisa mengirimkan input diantaranya melalui:
+// 1. path params => req.params
+// ex: host/product/:id
+// 2. query params => req.query
+// ex: localhost/product?product=Tomato
+// 3. body = req.body
+// form url encoded dan raw json dll
+
+const getProductById = (req, res) => {
+  const id = req.params.id;
+  getSingleProductFromServer(id)
+    .then(({ data }) => {
+      // const { data } = result;
       res.status(200).json({
-        data: result,
+        data,
         err: null,
       });
     })
@@ -34,7 +50,40 @@ const getProductById = (_, res) => {
       const { err, status } = error;
       res.status(status).json({
         data: [],
-        err: err.message,
+        err,
+      });
+    });
+};
+
+const findProductByQuery = (req, res) => {
+  findProduct(req.query)
+    .then(({ data, total }) => {
+      res.status(200).json({
+        err: null,
+        data,
+        total,
+      });
+    })
+    .catch(({ status, err }) => {
+      res.status(status).json({
+        data: [],
+        err,
+      });
+    });
+};
+
+const postNewProduct = (req, res) => {
+  createNewProduct(req.body)
+    .then(({ data }) => {
+      res.status(200).json({
+        err: null,
+        data,
+      });
+    })
+    .catch(({ status, err }) => {
+      res.status(status).json({
+        err,
+        data: [],
       });
     });
 };
@@ -42,4 +91,6 @@ const getProductById = (_, res) => {
 module.exports = {
   getAllProducts,
   getProductById,
+  findProductByQuery,
+  postNewProduct,
 };
