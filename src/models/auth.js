@@ -1,0 +1,33 @@
+const { v4: uuidV4 } = require("uuid");
+const db = require("../config/db");
+
+const register = (email, hashedPassword) => {
+  return new Promise((resolve, reject) => {
+    const sqlQuery = "INSERT INTO users VALUES ($1, $2, $3, $4)";
+    const id = uuidV4();
+    const timestamp = new Date(Date.now());
+    const values = [id, email, hashedPassword, timestamp];
+    db.query(sqlQuery, values)
+      .then(() => {
+        resolve();
+      })
+      .catch((err) => {
+        reject({ status: 500, err });
+      });
+  });
+};
+
+const getUserByEmail = (email) => {
+  return new Promise((resolve, reject) => {
+    const sqlQuery = "SELECT email FROM users WHERE email = $1";
+    db.query(sqlQuery, [email])
+      .then((result) => {
+        resolve(result);
+      })
+      .catch((err) => {
+        reject({ status: 500, err });
+      });
+  });
+};
+
+module.exports = { register, getUserByEmail };
