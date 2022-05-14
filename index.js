@@ -1,7 +1,9 @@
+require("dotenv").config();
 // import package express
 const express = require("express");
 const mainRouter = require("./src/routes/index");
 const db = require("./src/config/db");
+const logger = require("morgan");
 
 // create express application
 const server = express();
@@ -12,6 +14,9 @@ db.connect()
   .then(() => {
     console.log("DB Connected");
     // pasang middleware global
+    server.use(
+      logger(":method :url :status :res[content-length] - :response-time ms")
+    );
     // handler body form url endcoded
     server.use(express.urlencoded({ extended: false }));
     // handler/middleware untuk body raw json
