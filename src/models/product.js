@@ -1,7 +1,7 @@
 // const { response } = require("express");
 const db = require("../config/db");
 
-const getProductFromServer = () => {
+const getProducts = (query) => {
   return new Promise((resolve, reject) => {
     // let err = false;
     // if (err)
@@ -10,13 +10,33 @@ const getProductFromServer = () => {
     //     status: 500,
     //   });
     // return resolve(products);
-    db.query("SELECT * FROM products")
+    // page = 1 adalah default halaman ketika query tidak ditemukan
+    const { page = 1, limit = 3 } = query;
+    // page   1 2 3 4
+    // offset 0 3 6 9
+    // rumus offset = (page - 1) * 3 (limit)
+    const offset = (parseInt(page) - 1) * Number(limit);
+
+    db.query("SELECT * FROM products ORDER BY id LIMIT $1 OFFSET $2", [
+      Number(limit),
+      offset,
+    ])
       .then((result) => {
+        // ambil total data
         const response = {
-          total: result.rowCount,
           data: result.rows,
         };
-        resolve(response);
+        db.query("SELECT COUNT (*) AS total_product FROM products")
+          .then((result) => {
+            response.totalData = parseInt(result.rows[0]["total_product"]);
+            response.totalPage = Math.ceil(
+              response.totalData / parseInt(limit)
+            );
+            resolve(response);
+          })
+          .catch((err) => {
+            reject({ status: 500, err });
+          });
       })
       .catch((err) => {
         reject({ status: 500, err });
@@ -87,7 +107,7 @@ const createNewProduct = (body) => {
 };
 
 module.exports = {
-  getProductFromServer,
+  getProducts,
   getSingleProductFromServer,
   findProduct,
   createNewProduct,

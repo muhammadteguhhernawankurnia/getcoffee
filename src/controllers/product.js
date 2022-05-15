@@ -1,22 +1,24 @@
-// const { Router } = require("express");
-
+const { successResponse } = require("../helpers/response");
 const productModel = require("../models/product");
 const {
-  getProductFromServer,
+  getProducts,
   getSingleProductFromServer,
   findProduct,
   createNewProduct,
 } = productModel;
 
-const getAllProducts = (_, res) => {
-  getProductFromServer()
+const getAllProducts = (req, res) => {
+  getProducts(req.query)
     .then((result) => {
-      const { total, data } = result;
-      res.status(200).json({
-        data,
-        total,
-        err: null,
-      });
+      const { totalData, totalPage, data } = result;
+      const meta = {
+        totalData,
+        totalPage,
+        route: `/product${req.route.path}?`,
+        query: req.query,
+        page: req.query.page,
+      };
+      successResponse(res, 200, data, meta);
     })
     .catch((error) => {
       const { err, status } = error;

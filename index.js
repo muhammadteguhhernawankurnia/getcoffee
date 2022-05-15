@@ -1,9 +1,11 @@
 require("dotenv").config();
 // import package express
 const express = require("express");
+const cors = require("cors");
 const mainRouter = require("./src/routes/index");
 const db = require("./src/config/db");
 const logger = require("morgan");
+// const { append } = require("express/lib/response");
 
 // create express application
 const server = express();
@@ -21,6 +23,16 @@ db.connect()
     server.use(express.urlencoded({ extended: false }));
     // handler/middleware untuk body raw json
     server.use(express.json());
+
+    // pasang cors
+    const corsOptions = {
+      origin: "*",
+      methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+      allowedHeaders: ["Content-Type", "Authorization"],
+    };
+    // server.use(cors(corsOptions));
+    server.options("*", cors(corsOptions));
+
     // pasang server ke router
     server.use(mainRouter);
 
