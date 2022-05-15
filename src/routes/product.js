@@ -3,6 +3,7 @@ const Router = require("express").Router();
 
 const productController = require("../controllers/product");
 const validate = require("../middlewares/validate");
+const { checkToken } = require("../middlewares/auth");
 
 // daftar HTTP request method
 // definisikan endpoint
@@ -11,7 +12,12 @@ const validate = require("../middlewares/validate");
 Router.get("/all", productController.getAllProducts);
 Router.get("/:id", productController.getProductById);
 Router.get("/", validate.queryFind, productController.findProductByQuery);
-Router.post("/", validate.productData, productController.postNewProduct);
+Router.post(
+  "/",
+  checkToken,
+  validate.productData,
+  productController.postNewProduct
+);
 
 Router.get("/", (req, res) => {
   res.json({
