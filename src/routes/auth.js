@@ -6,7 +6,7 @@ const { checkDuplicate } = require("../middlewares/auth");
 // register
 Router.post("/new", checkDuplicate, authController.register);
 // sign in
-Router.post("/", () => {});
+Router.post("/", authController.signIn);
 
 // sign out
 Router.delete("/", (_, res) => {

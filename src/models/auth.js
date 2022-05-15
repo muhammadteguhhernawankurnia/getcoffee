@@ -30,4 +30,18 @@ const getUserByEmail = (email) => {
   });
 };
 
-module.exports = { register, getUserByEmail };
+const getPassByUserEmail = async (email) => {
+  try {
+    const sqlQuery = "SELECT pass FROM users WHERE email = $1";
+    const result = await db.query(sqlQuery, [email]);
+    // cek apakah ada pass
+    if (result.rowCount === 0)
+      throw { status: 400, err: { msg: "Email is not registered" } };
+    return result.rows[0];
+  } catch (error) {
+    const { status = 500, err } = error;
+    throw { status, err };
+  }
+};
+
+module.exports = { register, getUserByEmail, getPassByUserEmail };
