@@ -46,7 +46,7 @@ auth.signIn = async (req, res) => {
     };
     const jwtOptions = {
       issuer: process.env.JWT_ISSUER,
-      expiresIn: "10s", // expires in 10s
+      expiresIn: "1000s", // expires in 1000s
     };
     const token = jwt.sign(payload, process.env.JWT_SECRET, jwtOptions);
     // return

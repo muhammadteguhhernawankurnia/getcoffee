@@ -33,6 +33,9 @@ db.connect()
     // server.use(cors(corsOptions));
     server.options("*", cors(corsOptions));
 
+    // digunakan untuk membuka akses ke static file
+    server.use(express.static("public"));
+
     // pasang server ke router
     server.use(mainRouter);
 
