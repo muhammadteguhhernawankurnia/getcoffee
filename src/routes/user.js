@@ -12,7 +12,7 @@ Router.patch("/", checkToken, imageUpload.single("photo"), (req, res) => {
   db.query("UPDATE users SET photo = $1 WHERE id = $2 RETURNING photo", [
     photo,
     id,
-  ])
+  ]) // photo setelah signin belum masuk ke db users
     .then((result) => {
       successResponse(res, 200, result.rows[0], null);
       console.log(result.rows);
