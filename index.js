@@ -31,7 +31,7 @@ db.connect()
       allowedHeaders: ["Content-Type", "Authorization"],
     };
     // server.use(cors(corsOptions));
-    server.options("*", cors(corsOptions));
+    server.use("*", cors(corsOptions));
 
     // digunakan untuk membuka akses ke static file
     server.use(express.static("public"));
